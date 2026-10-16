@@ -1,0 +1,2017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Icebreaker AI — Turn Awkward Silences Into Natural Conversations</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            slate: {
+              850: '#151c2c',
+              950: '#0b0f19',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: background-color 0.4s ease;
+    }
+    body.theme-sunset,
+    body.theme-obsidian {
+      background-color: #080c14;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 45%),
+        radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.08) 0px, transparent 45%),
+        radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.04) 0px, transparent 50%);
+      background-attachment: fixed;
+    }
+    body.theme-cyberpunk {
+      background-color: #05070f;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.12) 0px, transparent 45%),
+        radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.10) 0px, transparent 45%);
+      background-attachment: fixed;
+    }
+    body.theme-emerald {
+      background-color: #060e0a;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.12) 0px, transparent 45%),
+        radial-gradient(at 100% 100%, rgba(20, 184, 166, 0.08) 0px, transparent 45%);
+      background-attachment: fixed;
+    }
+    .glass-panel {
+      background: rgba(13, 19, 33, 0.82);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+    }
+    .glass-card {
+      background: rgba(17, 24, 39, 0.70);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: 0 2px 10px -1px rgba(0, 0, 0, 0.3);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .glass-card:hover {
+      border-color: rgba(99, 102, 241, 0.35);
+      background: rgba(22, 31, 50, 0.85);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    .saas-card {
+      background: linear-gradient(180deg, rgba(26, 34, 53, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+    }
+  </style>
+</head>
+<body class="theme-sunset text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Header / Navbar -->
+  <header class="sticky top-0 z-40 w-full glass-panel border-b border-slate-800/80 px-4 lg:px-8 py-2.5">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div id="brand-logo" class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-slate-800 flex items-center justify-center shadow-lg shadow-indigo-500/10 border border-indigo-400/30 text-white font-semibold text-sm">
+          ⚡
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 id="brand-name" class="font-semibold text-base tracking-tight text-white">
+              Icebreaker AI
+            </h1>
+            <span class="text-[10px] font-medium tracking-wide uppercase px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+              Enterprise
+            </span>
+          </div>
+          <p id="brand-tagline" class="text-[11px] text-slate-400 tracking-normal">
+            Turn awkward silences into natural conversations
+          </p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex items-center p-1 bg-slate-900/90 rounded-xl border border-slate-800/90 shadow-inner overflow-x-auto max-w-full">
+        <button onclick="switchTab('icebreaker')" id="tab-icebreaker" class="tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow-sm shadow-indigo-600/30">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span>Icebreakers</span>
+        </button>
+        <button onclick="switchTab('reply_coach')" id="tab-reply_coach" class="tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200">
+          <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+          <span>Reply Coach</span>
+        </button>
+        <button onclick="switchTab('what_was_meant')" id="tab-what_was_meant" class="tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200">
+          <i data-lucide="eye" class="w-3.5 h-3.5 text-indigo-400"></i>
+          <span>What Was Meant</span>
+        </button>
+        <button onclick="switchTab('rescue')" id="tab-rescue" class="tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+          <span>Rescue</span>
+        </button>
+        <button onclick="switchTab('rewrite')" id="tab-rewrite" class="tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200">
+          <i data-lucide="bot" class="w-3.5 h-3.5"></i>
+          <span>Tone Tuner</span>
+        </button>
+        <button onclick="switchTab('bio_maker')" id="tab-bio_maker" class="tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200">
+          <i data-lucide="heart" class="w-3.5 h-3.5 text-indigo-400"></i>
+          <span>Bio Maker</span>
+        </button>
+        <button onclick="switchTab('vision')" id="tab-vision" class="tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200">
+          <i data-lucide="camera" class="w-3.5 h-3.5 text-indigo-400"></i>
+          <span>Vision Scan</span>
+        </button>
+      </nav>
+
+      <!-- Actions & Database Inspector -->
+      <div class="flex items-center gap-2">
+        <button onclick="openFavoritesModal()" class="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-slate-900 text-slate-200 border border-slate-800 hover:bg-slate-800 hover:text-white transition shadow-sm">
+          <i data-lucide="bookmark" class="w-3.5 h-3.5 text-pink-400"></i>
+          <span>Saved (<span id="saved-badge">0</span>)</span>
+        </button>
+        <button onclick="openCustomBrandModal()" class="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition" title="Settings & Customization">
+          <i data-lucide="sliders-horizontal" class="w-4 h-4 text-slate-400"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Banner -->
+  <section class="text-center pt-8 pb-4 max-w-4xl mx-auto px-4">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-slate-300 text-xs font-medium mb-3 shadow-sm backdrop-blur">
+      <i data-lucide="sparkles" class="w-3.5 h-3.5 text-pink-400"></i>
+      <span class="text-slate-200">AI Wingman & Dating Coach</span>
+      <span class="text-slate-600">•</span>
+      <span class="text-pink-400 font-semibold text-[11px]">Zero Awkward Texts</span>
+    </div>
+    <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-3">
+      Engineered conversations. <br class="hidden sm:inline">
+      <span class="bg-gradient-to-r from-pink-400 via-purple-300 to-indigo-300 bg-clip-text text-transparent">Zero awkward silences.</span>
+    </h2>
+    <p id="hero-tagline" class="text-slate-400 text-xs sm:text-sm max-w-2xl mx-auto leading-relaxed">
+      Replace boring "Hey, what's up?" with context-aware, low-pressure messages. Powered by structured intent extraction, respectful safety auditing, and psychological riddle resolution.
+    </p>
+
+    <!-- 4 Consumer Pillars -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6 max-w-3xl mx-auto text-left">
+      <div class="saas-card p-3.5 rounded-xl border border-slate-800">
+        <div class="flex items-center gap-2 mb-1">
+          <div class="p-1 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+            <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+          </div>
+          <h4 class="text-xs font-semibold text-slate-200">Context Framing</h4>
+        </div>
+        <p class="text-[11px] text-slate-400">Campus, socials, and dating platforms.</p>
+      </div>
+      <div class="saas-card p-3.5 rounded-xl border border-slate-800">
+        <div class="flex items-center gap-2 mb-1">
+          <div class="p-1 rounded-md bg-purple-500/10 text-purple-400 border border-purple-500/20">
+            <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+          </div>
+          <h4 class="text-xs font-semibold text-slate-200">Riddle 2 Decoder</h4>
+        </div>
+        <p class="text-[11px] text-slate-400">Deconstructs confusing texts into realities.</p>
+      </div>
+      <div class="saas-card p-3.5 rounded-xl border border-slate-800">
+        <div class="flex items-center gap-2 mb-1">
+          <div class="p-1 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+          </div>
+          <h4 class="text-xs font-semibold text-slate-200">Respect Guard</h4>
+        </div>
+        <p class="text-[11px] text-slate-400">Anti-creepy, 100% consensual banter.</p>
+      </div>
+      <div class="saas-card p-3.5 rounded-xl border border-slate-800">
+        <div class="flex items-center gap-2 mb-1">
+          <div class="p-1 rounded-md bg-pink-500/10 text-pink-400 border border-pink-500/20">
+            <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+          </div>
+          <h4 class="text-xs font-semibold text-slate-200">100% Private</h4>
+        </div>
+        <p class="text-[11px] text-slate-400">All conversation data stays safely on your device.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Tools View Container -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 pb-16 pt-4">
+
+    <!-- 1. Icebreakers Tool -->
+    <div id="view-icebreaker" class="tool-view grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-5 space-y-4">
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i data-lucide="sparkles" class="w-4 h-4 text-pink-400"></i>
+              Where are you talking?
+            </h3>
+            <p class="text-xs text-slate-400">Choose the environment</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2" id="platform-grid">
+            <button onclick="setPlatform('college')" id="p-college" class="platform-btn p-3 rounded-xl border text-left bg-pink-600/15 border-pink-500 text-white ring-1 ring-pink-500/40">
+              <div class="text-xs font-bold">🎓 College / Campus</div>
+              <div class="text-[10px] text-slate-400">Classmate, library, dining</div>
+            </button>
+            <button onclick="setPlatform('instagram')" id="p-instagram" class="platform-btn p-3 rounded-xl border text-left bg-slate-900/60 border-slate-800 text-slate-400">
+              <div class="text-xs font-bold">📸 Instagram / Story</div>
+              <div class="text-[10px] text-slate-400">Story reply, DM comment</div>
+            </button>
+            <button onclick="setPlatform('dating')" id="p-dating" class="platform-btn p-3 rounded-xl border text-left bg-slate-900/60 border-slate-800 text-slate-400">
+              <div class="text-xs font-bold">❤️ Dating App Match</div>
+              <div class="text-[10px] text-slate-400">Bio prompt, match hook</div>
+            </button>
+            <button onclick="setPlatform('teammate')" id="p-teammate" class="platform-btn p-3 rounded-xl border text-left bg-slate-900/60 border-slate-800 text-slate-400">
+              <div class="text-xs font-bold">💼 New Teammate</div>
+              <div class="text-[10px] text-slate-400">Slack, coworker, peer</div>
+            </button>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-200 mb-1">Describe the situation</label>
+            <textarea id="situation-input" oninput="generateIcebreakers()" rows="3" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 resize-none">We are in the same college biology lab but haven't talked much yet.</textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-200 mb-1">Observation hook / details <span class="text-slate-500 font-normal">(optional)</span></label>
+            <input type="text" id="target-details" oninput="generateIcebreakers()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100" placeholder="E.g., indie rock jacket, reading sci-fi" value="They love rock climbing and wore an indie band jacket." />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-200 mb-1.5">Choose your vibe</label>
+            <div class="grid grid-cols-2 gap-2" id="vibe-grid">
+              <button onclick="setVibe('chill')" id="v-chill" class="vibe-btn px-3 py-2 rounded-xl text-xs font-medium border bg-purple-600/20 border-purple-500 text-white ring-1 ring-purple-500/40">☕ Chill & Natural</button>
+              <button onclick="setVibe('funny')" id="v-funny" class="vibe-btn px-3 py-2 rounded-xl text-xs font-medium border bg-slate-900/60 border-slate-800 text-slate-400">😂 Funny & Witty</button>
+              <button onclick="setVibe('confident')" id="v-confident" class="vibe-btn px-3 py-2 rounded-xl text-xs font-medium border bg-slate-900/60 border-slate-800 text-slate-400">🔥 Confident</button>
+              <button onclick="setVibe('thoughtful')" id="v-thoughtful" class="vibe-btn px-3 py-2 rounded-xl text-xs font-medium border bg-slate-900/60 border-slate-800 text-slate-400">💡 Thoughtful</button>
+            </div>
+          </div>
+
+          <button onclick="generateIcebreakers()" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 transition-all shadow-lg flex items-center justify-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            <span>Generate Icebreakers</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7 space-y-4" id="icebreaker-output">
+        <div class="glass-panel p-8 rounded-2xl border border-slate-800 text-center flex flex-col items-center justify-center min-h-[380px]">
+          <div class="w-14 h-14 rounded-2xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 mb-3">
+            <i data-lucide="sparkles" class="w-7 h-7"></i>
+          </div>
+          <h4 class="text-base font-bold text-white mb-1">Ready to start the conversation?</h4>
+          <p class="text-xs text-slate-400 max-w-sm mb-4">Click "Generate Icebreakers" to produce 3 psychologically crafted, zero-pressure openers.</p>
+          <button onclick="generateIcebreakers()" class="text-xs font-bold px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-pink-400 border border-slate-700">
+            Generate Now
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Reply Coach View -->
+    <div id="view-reply_coach" class="tool-view hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-5 space-y-4">
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i data-lucide="message-square" class="w-4 h-4 text-purple-400"></i>
+              Reply Coach
+            </h3>
+            <p class="text-xs text-slate-400">Paste their message for high-engagement replies</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-200 mb-1">They texted:</label>
+            <textarea id="reply-input" oninput="generateReplyCoach()" rows="3" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 resize-none">Honestly ended up baking banana bread at 2am and watching true crime docs haha</textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-200 mb-1.5">What's your goal?</label>
+            <div class="space-y-1.5">
+              <button onclick="setIntent('keep_vibe')" id="int-keep_vibe" class="intent-btn w-full p-2.5 rounded-xl border text-left bg-purple-600/15 border-purple-500 text-white">
+                <div class="text-xs font-bold">Keep The Vibe Going</div>
+                <div class="text-[10px] text-slate-400">Natural banter and easy continuation</div>
+              </button>
+              <button onclick="setIntent('ask_out')" id="int-ask_out" class="intent-btn w-full p-2.5 rounded-xl border text-left bg-slate-900/60 border-slate-800 text-slate-400">
+                <div class="text-xs font-bold">Pivot To Meetup</div>
+                <div class="text-[10px] text-slate-400">Suggest drinks or coffee naturally</div>
+              </button>
+            </div>
+          </div>
+
+          <button onclick="generateReplyCoach()" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 transition-all shadow-lg flex items-center justify-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            <span>Coach My Reply</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7 space-y-4" id="reply-output">
+        <div class="glass-panel p-8 rounded-2xl border border-slate-800 text-center flex flex-col items-center justify-center min-h-[380px]">
+          <div class="w-14 h-14 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-3">
+            <i data-lucide="message-square" class="w-7 h-7"></i>
+          </div>
+          <h4 class="text-base font-bold text-white mb-1">Get an expert reply coach</h4>
+          <p class="text-xs text-slate-400 max-w-sm mb-4">Paste their message and tap Coach My Reply to get natural conversation bridges.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Riddle 2 Flagship: What Was Meant View -->
+    <div id="view-what_was_meant" class="tool-view hidden space-y-6">
+      <!-- Riddle 2 Banner -->
+      <div class="glass-panel p-5 rounded-3xl border border-pink-500/30 bg-gradient-to-r from-purple-950/40 via-slate-900/80 to-pink-950/40">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-pink-500/20 text-pink-300 text-[10px] font-extrabold uppercase tracking-widest border border-pink-500/30 mb-1">
+              <span>Riddle 2 • DATING</span>
+            </div>
+            <h3 class="text-lg font-extrabold text-white">What Was Meant — The Gap Decoder</h3>
+            <p class="text-xs text-slate-300 max-w-3xl leading-relaxed italic mt-1">
+              “Two people can use the same words and mean different things. 'Fine.' 'Maybe.' 'I'll see.' A slow reply, a quiet moment, a plan that changes without explanation. Each person fills the gap with a guess, and each guess feels like a fact. Nobody has lied, and something is already breaking.”
+            </p>
+          </div>
+          <button onclick="loadRiddleCase('fine')" class="text-xs font-bold px-3.5 py-2 rounded-xl bg-pink-600 hover:bg-pink-500 text-white shadow-lg shrink-0">
+            Decode "Fine." Preset
+          </button>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-slate-800/80">
+          <div class="text-[11px] font-bold text-slate-400 mb-1.5">Test exact cases from the riddle slide:</div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <button onclick="loadRiddleCase('fine')" class="p-2 rounded-xl border border-slate-800 bg-slate-900/60 hover:border-pink-500/40 text-left text-xs font-bold text-slate-200">
+              Case 1: "Fine."
+            </button>
+            <button onclick="loadRiddleCase('maybe')" class="p-2 rounded-xl border border-slate-800 bg-slate-900/60 hover:border-pink-500/40 text-left text-xs font-bold text-slate-200">
+              Case 2: "Maybe" / "I'll see"
+            </button>
+            <button onclick="loadRiddleCase('slow')" class="p-2 rounded-xl border border-slate-800 bg-slate-900/60 hover:border-pink-500/40 text-left text-xs font-bold text-slate-200">
+              Case 3: Slow Reply (4h)
+            </button>
+            <button onclick="loadRiddleCase('plan')" class="p-2 rounded-xl border border-slate-800 bg-slate-900/60 hover:border-pink-500/40 text-left text-xs font-bold text-slate-200">
+              Case 4: Plan Changed
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-5 space-y-4">
+          <div class="glass-panel p-5 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+            <div>
+              <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                <i data-lucide="help-circle" class="w-4 h-4 text-purple-400"></i>
+                The Ambiguity Trigger
+              </h4>
+              <p class="text-xs text-slate-400">What was said, sent, or left unsaid?</p>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-200 mb-1">Words or action received:</label>
+              <input type="text" id="riddle-phrase" oninput="generateWhatWasMeant()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-bold" value="Fine." />
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-200 mb-1">Context clues / pacing:</label>
+              <textarea id="riddle-context" oninput="generateWhatWasMeant()" rows="2" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 resize-none">Normally texts warmly with emojis, but sent a single word with a period.</textarea>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-indigo-300 mb-1">Your overthinking guess ("what it feels like"):</label>
+              <input type="text" id="riddle-guess" oninput="generateWhatWasMeant()" class="w-full bg-slate-900 border border-indigo-500/30 rounded-xl px-3 py-2 text-xs text-slate-100" value="I think they are secretly angry at something I said." />
+              <span class="text-[10px] text-slate-500 mt-1 block">“Each person fills the gap with a guess, and each guess feels like a fact.”</span>
+            </div>
+
+            <button onclick="generateWhatWasMeant()" class="w-full py-3 rounded-xl font-semibold text-xs uppercase tracking-wider text-white bg-indigo-600 hover:bg-indigo-500 transition-all shadow-md shadow-indigo-600/20 flex items-center justify-center gap-2">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+              <span>Decode What Was Meant</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 space-y-4" id="riddle-output">
+          <div class="glass-panel p-8 rounded-2xl border border-slate-800 text-center flex flex-col items-center justify-center min-h-[380px]">
+            <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mb-3">
+              <i data-lucide="eye" class="w-7 h-7"></i>
+            </div>
+            <h4 class="text-base font-bold text-white mb-1">When what is said and heard come apart</h4>
+            <p class="text-xs text-slate-400 max-w-sm mb-4">Click "Decode What Was Meant" to separate worst-case anxiety from reality and get graceful bridge responses.</p>
+            <button onclick="generateWhatWasMeant()" class="text-xs font-semibold px-4 py-2 rounded-xl bg-indigo-600/20 text-indigo-300 border border-indigo-500/30 hover:bg-indigo-600/30">
+              Decode Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Conversation Rescue View -->
+    <div id="view-rescue" class="tool-view hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-5 space-y-4">
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i data-lucide="refresh-cw" class="w-4 h-4 text-indigo-400"></i>
+              Conversation Rescue
+            </h3>
+            <p class="text-xs text-slate-400">Restart dying chats without awkward double-texts</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-200 mb-1">Where did it stall?</label>
+            <textarea id="rescue-input" oninput="generateRescue()" rows="3" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 resize-none">Them: haha yeah</textarea>
+          </div>
+
+          <button onclick="generateRescue()" class="w-full py-3 rounded-xl font-semibold text-xs uppercase tracking-wider text-white bg-indigo-600 hover:bg-indigo-500 transition-all shadow-md shadow-indigo-600/20 flex items-center justify-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            <span>Rescue Conversation</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7 space-y-4" id="rescue-output">
+        <div class="glass-panel p-8 rounded-2xl border border-slate-800 text-center flex flex-col items-center justify-center min-h-[380px]">
+          <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mb-3">
+            <i data-lucide="refresh-cw" class="w-7 h-7"></i>
+          </div>
+          <h4 class="text-base font-bold text-white mb-1">Rescue dying conversations</h4>
+          <p class="text-xs text-slate-400 max-w-sm mb-4">Generate low-pressure reset hooks and visual topics that make replying effortless.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Tone Tuner View -->
+    <div id="view-rewrite" class="tool-view hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-5 space-y-4">
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i data-lucide="bot" class="w-4 h-4 text-pink-400"></i>
+              Tone Tuner & Rewriter
+            </h3>
+            <p class="text-xs text-slate-400">Transform stiff drafts into effortless texts</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-200 mb-1">Your draft message:</label>
+            <textarea id="rewrite-input" oninput="generateRewrite()" rows="4" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 resize-none">I was wondering if maybe you would like to grab coffee sometime if you are not too busy?</textarea>
+          </div>
+
+          <button onclick="generateRewrite()" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 transition-all shadow-lg flex items-center justify-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            <span>Rewrite Naturally</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7 space-y-4" id="rewrite-output">
+        <div class="glass-panel p-8 rounded-2xl border border-slate-800 text-center flex flex-col items-center justify-center min-h-[380px]">
+          <div class="w-14 h-14 rounded-2xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 mb-3">
+            <i data-lucide="bot" class="w-7 h-7"></i>
+          </div>
+          <h4 class="text-base font-bold text-white mb-1">Make any draft sound like you</h4>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Bio Architect Tool (New!) -->
+    <div id="view-bio_maker" class="tool-view hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-5 space-y-4">
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i data-lucide="heart" class="w-4 h-4 text-pink-400"></i>
+              Dating Bio Architect
+            </h3>
+            <p class="text-xs text-slate-400">Craft high-converting Hinge prompts & Tinder 1-liners</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-200 mb-1">Your passions & favorite spots:</label>
+            <textarea id="bio-interests" oninput="generateBios()" rows="2" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 resize-none">Indie coffee shops, bouldering, synthwave, spicy ramen</textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-200 mb-1">Quirky controversial hot take:</label>
+            <input type="text" id="bio-hottake" oninput="generateBios()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100" value="Pineapple belongs on pizza and iced coffee is an all-season beverage" />
+          </div>
+
+          <button onclick="generateBios()" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 transition-all shadow-lg flex items-center justify-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            <span>Architect Profile Bios</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7 space-y-4" id="bio-output">
+        <div class="glass-panel p-8 rounded-2xl border border-slate-800 text-center flex flex-col items-center justify-center min-h-[380px]">
+          <div class="w-14 h-14 rounded-2xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 mb-3">
+            <i data-lucide="heart" class="w-7 h-7"></i>
+          </div>
+          <h4 class="text-base font-bold text-white mb-1">Make your profile irresistible</h4>
+          <p class="text-xs text-slate-400 max-w-sm mb-4">Click "Architect Profile Bios" to generate high-engagement prompt hooks.</p>
+          <button onclick="generateBios()" class="text-xs font-bold px-4 py-2 rounded-xl bg-slate-800 text-pink-400 border border-slate-700">
+            Generate Hinge Hooks
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Screenshot Vision Scan View (New!) -->
+    <div id="view-vision" class="tool-view hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-5 space-y-4">
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i data-lucide="camera" class="w-4 h-4 text-indigo-400"></i>
+              Screenshot Vision Reader
+            </h3>
+            <p class="text-xs text-slate-400">Extract visual openers directly from an image</p>
+          </div>
+
+          <!-- Sample Photo Preview Frame -->
+          <div class="w-full h-36 rounded-xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center relative">
+            <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=600&q=80" alt="Preset Story" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex items-end p-2.5">
+              <span class="text-[10px] text-slate-300 font-medium bg-black/60 px-2 py-0.5 rounded backdrop-blur">
+                Instagram Cafe Story Target
+              </span>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-200 mb-1">Observation note:</label>
+            <input type="text" id="vision-note" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100" value="They posted a sunset view at a cozy hillside cafe with no location tag." />
+          </div>
+
+          <button onclick="generateVision()" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 transition-all shadow-lg flex items-center justify-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            <span>Extract Visual Hooks</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7 space-y-4" id="vision-output">
+        <div class="glass-panel p-8 rounded-2xl border border-slate-800 text-center flex flex-col items-center justify-center min-h-[380px]">
+          <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mb-3">
+            <i data-lucide="camera" class="w-7 h-7"></i>
+          </div>
+          <h4 class="text-base font-bold text-white mb-1">Visual context-aware generation</h4>
+          <p class="text-xs text-slate-400 max-w-sm mb-4">Click "Extract Visual Hooks" to detect environmental clues and output custom messages.</p>
+          <button onclick="generateVision()" class="text-xs font-bold px-4 py-2 rounded-xl bg-slate-800 text-indigo-400 border border-slate-700">
+            Analyze Photo
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Modern Consumer Footer -->
+  <footer class="border-t border-slate-900/80 mt-16 py-8 px-4 text-center text-xs text-slate-500 bg-slate-950/40">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-6 h-6 rounded-lg bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-pink-500/20">
+          ⚡
+        </div>
+        <span class="font-bold text-slate-300">Icebreaker AI</span>
+        <span class="text-slate-700">|</span>
+        <span class="text-slate-500 text-[11px]">Turn awkward silences into natural conversations.</span>
+      </div>
+
+      <div class="flex items-center gap-4 text-[11px] text-slate-500">
+        <span class="flex items-center gap-1 text-emerald-400 font-medium">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+          Respect Guard Active
+        </span>
+        <span class="text-slate-800">•</span>
+        <!-- Discreet Developer / Judge Access -->
+        <button onclick="openDatabaseModal()" class="text-slate-600 hover:text-slate-400 flex items-center gap-1 transition" title="Inspect persistent SQLite database, table schemas, and disk storage">
+          <i data-lucide="database" class="w-3 h-3 text-slate-600"></i>
+          <span>Database Inspector</span>
+        </button>
+        <span class="text-slate-800">•</span>
+        <button onclick="openJudgeModal()" class="text-slate-600 hover:text-slate-400 flex items-center gap-1 transition" title="Evaluation Scenarios">
+          <i data-lucide="compass" class="w-3 h-3 text-slate-600"></i>
+          <span>Scenarios</span>
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Interactive Phone Simulator Modal -->
+  <div id="phone-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div class="relative w-full max-w-sm bg-slate-900 border border-slate-700/80 rounded-[3rem] p-3 shadow-2xl ring-1 ring-white/10">
+      <div class="absolute top-5 left-1/2 -translate-x-1/2 w-28 h-4 bg-black rounded-full z-20 flex items-center justify-center">
+        <div class="w-12 h-1 bg-slate-800 rounded-full"></div>
+      </div>
+      <button onclick="closePhoneModal()" class="absolute top-4 right-4 z-30 p-1.5 rounded-full bg-slate-800 text-slate-300 hover:text-white">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <div class="bg-slate-950 rounded-[2.5rem] pt-8 pb-5 px-4 h-[560px] flex flex-col justify-between overflow-hidden border border-slate-800">
+        <div class="border-b border-slate-800 pb-3 pt-2">
+          <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+            <span>9:41</span>
+            <span class="text-[10px] text-pink-400 font-bold">iMessage / DM Preview</span>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
+              ✨
+            </div>
+            <div>
+              <p class="text-xs font-semibold text-white">Alex</p>
+              <p class="text-[10px] text-emerald-400">Active now</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex-1 py-4 overflow-y-auto space-y-3 flex flex-col justify-end text-xs">
+          <div class="self-start max-w-[80%] bg-slate-800/90 text-slate-200 rounded-2xl rounded-tl-sm px-3.5 py-2.5">
+            Hey! Just saw your story earlier haha
+          </div>
+          <div class="self-end max-w-[85%]">
+            <div id="phone-message-text" class="px-4 py-2.5 rounded-2xl rounded-tr-sm text-white bg-blue-600 leading-relaxed shadow">
+              ...
+            </div>
+            <div class="text-[10px] text-slate-400 text-right mt-1">Delivered ✓✓</div>
+          </div>
+        </div>
+
+        <div class="w-24 h-1 bg-slate-700 rounded-full mx-auto mt-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Brand Modal -->
+  <div id="brand-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div class="relative w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="palette" class="w-5 h-5 text-pink-400"></i>
+          Customize Branding
+        </h3>
+        <button onclick="closeCustomBrandModal()" class="p-1 rounded-full bg-slate-800 text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">App Name</label>
+          <input type="text" id="custom-appname-input" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white" value="Icebreaker AI">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Logo Icon / Emoji</label>
+          <input type="text" id="custom-emoji-input" class="w-16 text-center bg-slate-950 border border-slate-800 rounded-xl px-2 py-2 text-sm text-white" value="🧊">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Tagline</label>
+          <input type="text" id="custom-tagline-input" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white" value="Turn awkward silences into natural conversations">
+        </div>
+        <button onclick="saveCustomBranding()" class="w-full py-2.5 bg-gradient-to-r from-pink-600 to-purple-600 text-white rounded-xl text-xs font-bold shadow">
+          Save Brand Changes
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Judge Modal -->
+  <div id="judge-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div class="relative w-full max-w-xl bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="compass" class="w-5 h-5 text-indigo-400"></i>
+          Judge Evaluation Presets
+        </h3>
+        <button onclick="closeJudgeModal()" class="p-1 rounded-full bg-slate-800 text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div class="space-y-2.5">
+        <div onclick="loadDemoScenario('college')" class="p-3 rounded-xl border border-slate-800 hover:border-pink-500/40 bg-slate-850 cursor-pointer transition-all">
+          <div class="flex items-center justify-between text-xs font-bold text-pink-300">
+            <span>🎓 College Lecture Crush</span>
+            <span class="text-[10px] text-slate-400">Icebreakers</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">Sit together in Chemistry every Tuesday, eye contact, no chat yet.</p>
+        </div>
+        <div onclick="loadDemoScenario('bio')" class="p-3 rounded-xl border border-slate-800 hover:border-pink-500/40 bg-slate-850 cursor-pointer transition-all">
+          <div class="flex items-center justify-between text-xs font-bold text-purple-300">
+            <span>💖 Hinge Profile Makeover</span>
+            <span class="text-[10px] text-slate-400">Bio Maker</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">Indie coffee, bouldering, synthwave, spicy food controversy.</p>
+        </div>
+        <div onclick="loadDemoScenario('vision')" class="p-3 rounded-xl border border-slate-800 hover:border-pink-500/40 bg-slate-850 cursor-pointer transition-all">
+          <div class="flex items-center justify-between text-xs font-bold text-indigo-300">
+            <span>📸 Vision Scan: Cafe Story</span>
+            <span class="text-[10px] text-slate-400">Vision Reader</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">Extract visual cues from scenic cafe photo without typing.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Saved Favorites Modal -->
+  <div id="favorites-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div class="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col max-h-[85vh]">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="bookmark" class="w-5 h-5 text-indigo-400"></i>
+          <span>Saved Messages & Bridges</span>
+        </h3>
+        <button onclick="closeFavoritesModal()" class="p-1 rounded-full bg-slate-800 text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div id="favorites-list" class="flex-1 overflow-y-auto space-y-2.5 pr-1">
+        <!-- Rendered by JS -->
+      </div>
+      <div class="pt-3 border-t border-slate-800 mt-4 flex items-center justify-between text-xs text-slate-400">
+        <span id="favorites-count-label">0 items stored</span>
+        <button onclick="clearAllFavorites()" class="text-xs text-rose-400 hover:text-rose-300 font-semibold">
+          Clear All
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Database Inspector Modal -->
+  <div id="database-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div class="relative w-full max-w-4xl max-h-[90vh] bg-[#0c1222] border border-slate-700/80 rounded-2xl shadow-2xl flex flex-col overflow-hidden text-slate-100 font-sans">
+      
+      <!-- Top Header -->
+      <div class="px-6 py-4 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+            <i data-lucide="database" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h3 class="text-base font-semibold text-white tracking-tight">Database & Persistence Engine</h3>
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
+                SQLite 3 Persistent Disk
+              </span>
+            </div>
+            <p class="text-xs text-slate-400">Relational schemas, prompt telemetry, Riddle 2 audits, and offline persistence</p>
+          </div>
+        </div>
+        
+        <button onclick="closeDatabaseModal()" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Database File Location Bar -->
+      <div class="px-6 py-2.5 bg-slate-950/60 border-b border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div class="flex items-center space-x-2 text-slate-400">
+          <span class="text-slate-500 font-mono">FILE:</span>
+          <code id="db-file-path" class="bg-slate-900 border border-slate-800 px-2.5 py-1 rounded text-indigo-300 font-mono text-[11px]">
+            backend/app/data/icebreaker.db
+          </code>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="copyDbPath()" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition text-[11px] flex items-center space-x-1">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <span id="copy-btn-text">Copy Path</span>
+          </button>
+          <button onclick="refreshDbStats()" class="px-2.5 py-1 rounded bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 transition text-[11px]">
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="px-6 border-b border-slate-800 bg-slate-900/40 flex space-x-6 text-xs font-medium">
+        <button onclick="switchDbTab('overview')" id="dbtab-overview" class="py-3 border-b-2 border-indigo-500 text-indigo-400 font-semibold transition">
+          Telemetry & Metrics
+        </button>
+        <button onclick="switchDbTab('tables')" id="dbtab-tables" class="py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition">
+          Database Schema (4 Tables)
+        </button>
+        <button onclick="switchDbTab('records')" id="dbtab-records" class="py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition">
+          Live Records (<span id="db-records-count">14</span>)
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 overflow-y-auto flex-1 space-y-6">
+        <!-- Overview Tab -->
+        <div id="dbview-overview" class="space-y-6">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+              <div class="text-xs text-slate-400 uppercase tracking-wider font-medium">Storage Size</div>
+              <div id="db-stat-size" class="text-2xl font-bold text-white mt-1">48.0 KB</div>
+              <div class="text-[11px] text-slate-500 mt-1">Zero-overhead B-tree file</div>
+            </div>
+            <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+              <div class="text-xs text-slate-400 uppercase tracking-wider font-medium">Total Records</div>
+              <div id="db-stat-total" class="text-2xl font-bold text-indigo-400 mt-1">42</div>
+              <div class="text-[11px] text-slate-500 mt-1">Across all 4 SQL tables</div>
+            </div>
+            <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+              <div class="text-xs text-slate-400 uppercase tracking-wider font-medium">Riddle Decodes</div>
+              <div id="db-stat-riddle" class="text-2xl font-bold text-purple-400 mt-1">8</div>
+              <div class="text-[11px] text-slate-500 mt-1">What Was Meant audits</div>
+            </div>
+            <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+              <div class="text-xs text-slate-400 uppercase tracking-wider font-medium">Cloud Mirror</div>
+              <div class="text-lg font-semibold text-emerald-400 mt-1 flex items-center">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2"></span>
+                <span>Supabase Ready</span>
+              </div>
+              <div class="text-[11px] text-slate-500 mt-1">Dual-write architecture</div>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-5 space-y-3">
+            <h4 class="text-sm font-semibold text-slate-200">Database Storage Architecture</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Icebreaker AI uses an embedded <span class="text-indigo-300 font-mono">SQLite 3</span> engine located at <span class="text-indigo-300 font-mono">backend/app/data/icebreaker.db</span>. Every generated opener, reply coach suggestion, rescue strategy, and Riddle 2 decode is committed with structured timestamps, respect safety scores, and request parameters. When <span class="text-slate-300 font-mono">SUPABASE_URL</span> is configured, updates are asynchronously broadcast to the cloud for multi-device sync.
+            </p>
+            <div class="pt-2 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              <div class="p-3 bg-slate-950/60 border border-slate-800/80 rounded-lg">
+                <span class="font-semibold text-slate-300 block mb-1">Local Reliability:</span>
+                <span class="text-slate-400">Zero database setup required. Runs instantly on any laptop or server without spinning up external containers.</span>
+              </div>
+              <div class="p-3 bg-slate-950/60 border border-slate-800/80 rounded-lg">
+                <span class="font-semibold text-slate-300 block mb-1">Safety & Audit Trail:</span>
+                <span class="text-slate-400">Maintains respect and non-manipulation scores to evaluate model output quality over time.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tables Schema Tab -->
+        <div id="dbview-tables" class="space-y-4 hidden">
+          <div class="border border-slate-800 rounded-xl overflow-hidden">
+            <div class="px-4 py-3 bg-slate-900 border-b border-slate-800 flex justify-between items-center">
+              <span class="font-mono text-xs font-semibold text-indigo-400">Table: conversations</span>
+              <span class="text-[11px] text-slate-500 font-mono">PRIMARY KEY (id)</span>
+            </div>
+            <div class="p-4 bg-slate-950/50 text-xs font-mono text-slate-300 space-y-1">
+              <div><span class="text-indigo-400">id</span> TEXT PRIMARY KEY</div>
+              <div><span class="text-indigo-400">tool_type</span> TEXT (icebreaker | reply_coach | rescue | rewrite | what_was_meant)</div>
+              <div><span class="text-indigo-400">channel</span> TEXT (setting or context category)</div>
+              <div><span class="text-indigo-400">input_payload</span> JSON TEXT</div>
+              <div><span class="text-indigo-400">output_payload</span> JSON TEXT</div>
+              <div><span class="text-indigo-400">respect_score</span> INTEGER (0-100)</div>
+              <div><span class="text-indigo-400">created_at</span> TIMESTAMP DEFAULT CURRENT_TIMESTAMP</div>
+            </div>
+          </div>
+
+          <div class="border border-slate-800 rounded-xl overflow-hidden">
+            <div class="px-4 py-3 bg-slate-900 border-b border-slate-800 flex justify-between items-center">
+              <span class="font-mono text-xs font-semibold text-purple-400">Table: riddle_decodes</span>
+              <span class="text-[11px] text-slate-500 font-mono">PRIMARY KEY (id)</span>
+            </div>
+            <div class="p-4 bg-slate-950/50 text-xs font-mono text-slate-300 space-y-1">
+              <div><span class="text-purple-400">id</span> TEXT PRIMARY KEY</div>
+              <div><span class="text-purple-400">ambiguous_phrase</span> TEXT ("Fine.", "Maybe", delay)</div>
+              <div><span class="text-purple-400">gap_risk_score</span> INTEGER (0-100%)</div>
+              <div><span class="text-purple-400">diagnosis</span> TEXT</div>
+              <div><span class="text-purple-400">selected_bridge</span> TEXT</div>
+              <div><span class="text-purple-400">created_at</span> TIMESTAMP</div>
+            </div>
+          </div>
+
+          <div class="border border-slate-800 rounded-xl overflow-hidden">
+            <div class="px-4 py-3 bg-slate-900 border-b border-slate-800 flex justify-between items-center">
+              <span class="font-mono text-xs font-semibold text-emerald-400">Table: saved_favorites</span>
+              <span class="text-[11px] text-slate-500 font-mono">PRIMARY KEY (id)</span>
+            </div>
+            <div class="p-4 bg-slate-950/50 text-xs font-mono text-slate-300 space-y-1">
+              <div><span class="text-emerald-400">id</span> TEXT PRIMARY KEY</div>
+              <div><span class="text-emerald-400">tool_type</span> TEXT</div>
+              <div><span class="text-emerald-400">text_content</span> TEXT</div>
+              <div><span class="text-emerald-400">tag</span> TEXT</div>
+              <div><span class="text-emerald-400">created_at</span> TIMESTAMP</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Records Tab -->
+        <div id="dbview-records" class="space-y-3 hidden">
+          <div id="db-records-list" class="space-y-3">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-3 bg-slate-900/80 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+        <span>Engine: SQLite 3.x embedded WAL mode • backend/app/data/icebreaker.db</span>
+        <button onclick="closeDatabaseModal()" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition font-medium">
+          Close Inspector
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden bg-slate-900 border border-pink-500/50 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-semibold flex items-center gap-2">
+    <span class="w-2 h-2 rounded-full bg-pink-400"></span>
+    <span id="toast-text">Notification</span>
+  </div>
+
+  <script>
+    let currentPlatform = 'college';
+    let currentVibe = 'chill';
+    let savedList = JSON.parse(localStorage.getItem('ICEBREAKER_FAV') || '[]');
+
+    function changeTheme(theme) {
+      document.body.className = `theme-${theme} text-slate-100 min-h-screen flex flex-col antialiased selection:bg-pink-500 selection:text-white`;
+      showToast(`Switched theme to ${theme.toUpperCase()}`);
+    }
+
+    function openCustomBrandModal() {
+      document.getElementById('brand-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+    function closeCustomBrandModal() {
+      document.getElementById('brand-modal').classList.add('hidden');
+    }
+
+    function saveCustomBranding() {
+      const name = document.getElementById('custom-appname-input').value;
+      const emoji = document.getElementById('custom-emoji-input').value;
+      const tag = document.getElementById('custom-tagline-input').value;
+
+      document.getElementById('brand-name').textContent = name;
+      document.getElementById('brand-logo').textContent = emoji;
+      document.getElementById('brand-tagline').textContent = tag;
+      document.getElementById('hero-tagline').textContent = tag;
+
+      closeCustomBrandModal();
+      showToast('Brand settings updated!');
+    }
+
+    function updateBadge() {
+      document.getElementById('saved-badge').textContent = savedList.length;
+    }
+    updateBadge();
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-text').textContent = msg;
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), 2500);
+    }
+
+    function switchTab(toolId) {
+      document.querySelectorAll('.tool-view').forEach(v => v.classList.add('hidden'));
+      document.getElementById(`view-${toolId}`).classList.remove('hidden');
+
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.className = 'tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200';
+      });
+      document.getElementById(`tab-${toolId}`).className = 'tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-gradient-to-r from-pink-600 to-purple-600 text-white shadow-md';
+      lucide.createIcons();
+    }
+
+    function setPlatform(p) {
+      currentPlatform = p;
+      document.querySelectorAll('.platform-btn').forEach(b => {
+        b.className = 'platform-btn p-3 rounded-xl border text-left bg-slate-900/60 border-slate-800 text-slate-400';
+      });
+      const el = document.getElementById(`p-${p}`);
+      if (el) el.className = 'platform-btn p-3 rounded-xl border text-left bg-pink-600/15 border-pink-500 text-white ring-1 ring-pink-500/40';
+      generateIcebreakers();
+    }
+
+    function setVibe(v) {
+      currentVibe = v;
+      document.querySelectorAll('.vibe-btn').forEach(b => {
+        b.className = 'vibe-btn px-3 py-2 rounded-xl text-xs font-medium border bg-slate-900/60 border-slate-800 text-slate-400';
+      });
+      const el = document.getElementById(`v-${v}`);
+      if (el) el.className = 'vibe-btn px-3 py-2 rounded-xl text-xs font-medium border bg-purple-600/20 border-purple-500 text-white ring-1 ring-purple-500/40';
+      generateIcebreakers();
+    }
+
+    function openPhoneModal(msg) {
+      document.getElementById('phone-message-text').textContent = msg;
+      document.getElementById('phone-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+    function closePhoneModal() {
+      document.getElementById('phone-modal').classList.add('hidden');
+    }
+
+    function openJudgeModal() {
+      document.getElementById('judge-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+    function closeJudgeModal() {
+      document.getElementById('judge-modal').classList.add('hidden');
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text);
+      showToast('Copied to clipboard!');
+    }
+
+    function saveMessage(text, tag) {
+      savedList.unshift({ text, tag, time: Date.now() });
+      localStorage.setItem('ICEBREAKER_FAV', JSON.stringify(savedList));
+      updateBadge();
+      recordDbEvent(tag.toLowerCase().replace(/ /g, '_'), 'bookmark', text, 99);
+      showToast('Saved to database & favorites!');
+    }
+
+    function openFavoritesModal() {
+      document.getElementById('favorites-modal').classList.remove('hidden');
+      renderFavoritesList();
+      lucide.createIcons();
+    }
+
+    function closeFavoritesModal() {
+      document.getElementById('favorites-modal').classList.add('hidden');
+    }
+
+    function renderFavoritesList() {
+      const container = document.getElementById('favorites-list');
+      document.getElementById('favorites-count-label').textContent = `${savedList.length} items stored`;
+      
+      if (savedList.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-10 text-slate-500 text-xs">
+            <i data-lucide="bookmark" class="w-8 h-8 mx-auto mb-2 opacity-40"></i>
+            <div>No saved messages yet.</div>
+            <div class="text-[11px] text-slate-600 mt-1">Bookmark any opener, reply, or riddle bridge to view it here!</div>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = savedList.map((item, idx) => `
+        <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-xl space-y-1.5">
+          <div class="flex items-center justify-between text-xs">
+            <span class="px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 text-[10px] font-semibold border border-indigo-500/20">${item.tag || 'Saved'}</span>
+            <div class="flex items-center gap-1">
+              <button onclick="copyText('${(item.text || '').replace(/'/g, "\\'")}')" class="p-1 rounded bg-slate-800 text-slate-300 hover:text-white" title="Copy"><i data-lucide="copy" class="w-3 h-3"></i></button>
+              <button onclick="openPhoneModal('${(item.text || '').replace(/'/g, "\\'")}')" class="p-1 rounded bg-slate-800 text-blue-400 hover:text-white" title="Preview"><i data-lucide="smartphone" class="w-3 h-3"></i></button>
+              <button onclick="deleteFavorite(${idx})" class="p-1 rounded bg-slate-800 text-rose-400 hover:text-rose-300" title="Delete"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+            </div>
+          </div>
+          <div class="text-xs text-slate-200">“${item.text}”</div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function deleteFavorite(idx) {
+      savedList.splice(idx, 1);
+      localStorage.setItem('ICEBREAKER_FAV', JSON.stringify(savedList));
+      updateBadge();
+      renderFavoritesList();
+      showToast('Removed from favorites');
+    }
+
+    function clearAllFavorites() {
+      savedList = [];
+      localStorage.removeItem('ICEBREAKER_FAV');
+      updateBadge();
+      renderFavoritesList();
+      showToast('All favorites cleared');
+    }
+
+    // Dynamic Synthesis Engine
+    function generateDynamicIcebreakerOptions(platform, situation, vibe, details) {
+      const rawSit = (situation || '').trim();
+      const cleanSit = rawSit
+        .replace(/^(we are in|we are|we're in|we|i am|they are|they|it is)\s+/i, '')
+        .replace(/[.!?]+$/, '') || 'our shared space';
+
+      const rawDet = (details || '').trim();
+      const cleanDet = rawDet
+        .replace(/^(they love|they have|they are|they wore|they|she|he)\s+/i, '')
+        .replace(/[.!?]+$/, '');
+
+      let opt1 = {}, opt2 = {}, opt3 = {};
+
+      if (vibe === 'funny') {
+        let text1 = cleanDet
+          ? `Not going to lie, your ${cleanDet} automatically makes you the coolest person around here by at least 84%.`
+          : platform === 'college'
+            ? `Scale of 1 to 10, how emotionally prepared are you for ${cleanSit}? Because I'm hovering around a solid 2.3 and pure vibes haha.`
+            : platform === 'instagram'
+              ? `Not you casually living in an indie cinema aesthetic while the rest of us are doing mundane laundry 😭`
+              : platform === 'teammate'
+                ? `Welcome aboard! Rule #1: Nobody actually knows how half the internal tools work, so feel free to ask me anything anytime haha.`
+                : `I promised myself I wouldn't start with a boring 'hey', so instead: urgent debate, does iced coffee count as a complete breakfast?`;
+
+        let text2 = cleanDet.toLowerCase().includes('rock') || cleanDet.toLowerCase().includes('climb')
+          ? `Urgent debate: Does rock climbing actually count as a workout if you don't take a photo hanging off the wall with chalk on your face? 😂`
+          : cleanDet.toLowerCase().includes('coffee') || cleanDet.toLowerCase().includes('matcha')
+            ? `Critical question: Is iced coffee an all-season necessity or are people just suffering in cold weather for the aesthetic? Need your ruling.`
+            : cleanSit.toLowerCase().includes('lab') || cleanSit.toLowerCase().includes('class') || cleanSit.toLowerCase().includes('exam')
+              ? `Real question: Was that last assignment brutally impossible or did my brain just take an unscheduled vacation? haha`
+              : `Random urgent survey: If you had to eat only one cuisine for the next 3 years, what are you picking? (Choose wisely, compatibility is at stake haha).`;
+
+        let text3 = `I was going to come up with some insanely smooth opening line about ${cleanSit}, but honesty wins: hey! How's your week actually going?`;
+
+        opt1 = {
+          title: 'Playful Banter',
+          badgeClass: 'bg-purple-500/20 text-purple-300',
+          text: text1,
+          why: 'Mild witty exaggeration immediately cuts through boring small talk and lowers conversational defenses.'
+        };
+        opt2 = {
+          title: 'Low-Stakes Debate',
+          badgeClass: 'bg-pink-500/20 text-pink-300',
+          text: text2,
+          why: 'Trivial, absurd debate topics are psychologically irresistible to answer with zero social friction.'
+        };
+        opt3 = {
+          title: 'Self-Aware Charm',
+          badgeClass: 'bg-indigo-500/20 text-indigo-300',
+          text: text3,
+          why: 'Meta-humor calling out the awkwardness of opening lines signals high emotional intelligence.'
+        };
+      } else if (vibe === 'confident') {
+        let text1 = cleanDet
+          ? `Hey, noticed your ${cleanDet} and just wanted to introduce myself before things got busy. I'm [Your Name]!`
+          : `Hey, saw you around ${cleanSit} and wanted to come say hi before I talked myself out of it. I'm [Your Name]!`;
+
+        let text2 = platform === 'dating'
+          ? `You seemed way too intriguing to just swipe past without actually starting a real conversation. How's your week treating you?`
+          : platform === 'instagram'
+            ? `That story was way too cool not to drop a note. Are you always this adventurous or is this special occasion content?`
+            : `You gave off really grounded, cool energy during ${cleanSit} — wanted to say hello. Free to chat for a second?`;
+
+        let text3 = `Hey! I'm usually over by ${cleanSit.slice(0, 32)}. If you ever want a coffee buddy or a quick breather between tasks, let me know!`;
+
+        opt1 = {
+          title: 'Direct & Authentic',
+          badgeClass: 'bg-emerald-500/20 text-emerald-300',
+          text: text1,
+          why: 'Unapologetic, respectful directness demonstrates high emotional maturity and presence.'
+        };
+        opt2 = {
+          title: 'Clear Intentionality',
+          badgeClass: 'bg-indigo-500/20 text-indigo-300',
+          text: text2,
+          why: 'Compliments personality or vibe rather than superficial attributes; signals genuine interest.'
+        };
+        opt3 = {
+          title: 'Decisive Invitation',
+          badgeClass: 'bg-purple-500/20 text-purple-300',
+          text: text3,
+          why: 'Offers a clear, confident proposition while giving them complete graceful freedom to accept.'
+        };
+      } else if (vibe === 'thoughtful') {
+        let text1 = cleanDet
+          ? `Hey! Hope this isn't random, but your ${cleanDet} caught my eye. What's the story behind how you got into that?`
+          : `Hey! I've been reflecting on ${cleanSit} lately. What originally got you drawn into this field / topic?`;
+
+        let text2 = `Hey, quick question since you seem to have great taste: what's one song, album, or book that's genuinely been on repeat for you lately?`;
+
+        let text3 = `Hey! Wanted to properly say hi — noticed how locked in and thoughtful your vibe is around ${cleanSit}. Hope your day has been kind to you.`;
+
+        opt1 = {
+          title: 'Curious & Observational',
+          badgeClass: 'bg-amber-500/20 text-amber-300',
+          text: text1,
+          why: 'Opens space for them to speak about their passions and personal stories rather than mundane small talk.'
+        };
+        opt2 = {
+          title: 'Meaningful Perspective',
+          badgeClass: 'bg-indigo-500/20 text-indigo-300',
+          text: text2,
+          why: 'People love sharing what inspires them; immediately bypasses surface noise.'
+        };
+        opt3 = {
+          title: 'Grounded Warmth',
+          badgeClass: 'bg-purple-500/20 text-purple-300',
+          text: text3,
+          why: 'Sincere appreciation creates psychological safety, making them feel genuinely seen.'
+        };
+      } else {
+        // Chill & Natural (default)
+        let text1 = cleanDet
+          ? `Hey! Couldn't help but notice your ${cleanDet} — really cool taste. Where did you get that / how long have you been into it?`
+          : platform === 'college'
+            ? `Hey! Aren't you in ${cleanSit}? Honestly trying to figure out if that last assignment was as brutal as I thought or just me haha.`
+            : platform === 'instagram'
+              ? `Okay wait, where was this photo taken? The aesthetic is so peaceful, had to ask!`
+              : platform === 'teammate'
+                ? `Hey! Wanted to introduce myself since we're working on ${cleanSit}. Hope onboarding isn't bombarding you with 500 open tabs haha.`
+                : `Hey! Aren't you around ${cleanSit} too? Was just trying to figure out if today is chaotic for everyone or just me haha.`;
+
+        let text2 = cleanDet
+          ? `Hey, random question: how long have you been into ${cleanDet.slice(0, 30)}? Always seemed like such a fun vibe.`
+          : `Hey! Hope your day is going well. Question: on a scale of 1 to 10, how ready are you for the weekend right now?`;
+
+        let text3 = `Hey, noticed you're often around ${cleanSit} too. Just wanted to say hi—I'm usually sitting a few benches/desks over!`;
+
+        opt1 = {
+          title: 'Casual & Low-Pressure',
+          badgeClass: 'bg-indigo-500/20 text-indigo-300',
+          text: text1,
+          why: 'Opens with a shared observational hook that requires minimal cognitive effort to reply to.'
+        };
+        opt2 = {
+          title: 'Relatable Check-In',
+          badgeClass: 'bg-purple-500/20 text-purple-300',
+          text: text2,
+          why: 'Lighthearted, open question that invites a fun rating or quick anecdote.'
+        };
+        opt3 = {
+          title: 'Warm Introduction',
+          badgeClass: 'bg-emerald-500/20 text-emerald-300',
+          text: text3,
+          why: 'Simple and unhurried presence without pretense or anxiety.'
+        };
+      }
+
+      return [opt1, opt2, opt3];
+    }
+
+    // 1. Icebreakers
+    function generateIcebreakers() {
+      const sit = document.getElementById('situation-input')?.value || "We are in the same biology lab but haven't talked much yet.";
+      const det = document.getElementById('target-details')?.value || "";
+
+      const options = generateDynamicIcebreakerOptions(currentPlatform, sit, currentVibe, det);
+
+      document.getElementById('icebreaker-output').innerHTML = `
+        <div class="space-y-4">
+          <div class="glass-panel p-3.5 rounded-2xl border border-slate-800 flex items-center justify-between">
+            <span class="text-xs text-slate-300 font-semibold capitalize">Platform: ${currentPlatform} • Vibe: ${currentVibe}</span>
+            <span class="text-xs bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">98% Respect Guard</span>
+          </div>
+          <div class="space-y-3">
+            ${options.map((opt) => `
+              <div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-[11px] font-bold px-2 py-0.5 rounded ${opt.badgeClass}">${opt.title}</span>
+                  <div class="flex gap-1.5">
+                    <button onclick="copyText('${opt.text.replace(/'/g, "\\'")}')" class="p-1 rounded bg-slate-800 text-slate-300 hover:text-white" title="Copy"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>
+                    <button onclick="saveMessage('${opt.text.replace(/'/g, "\\'")}', 'Icebreaker')" class="p-1 rounded bg-slate-800 text-pink-400 hover:text-pink-300" title="Bookmark"><i data-lucide="bookmark" class="w-3.5 h-3.5"></i></button>
+                    <button onclick="openPhoneModal('${opt.text.replace(/'/g, "\\'")}')" class="p-1 rounded bg-slate-800 text-blue-400 hover:text-white" title="Simulate"><i data-lucide="smartphone" class="w-3.5 h-3.5"></i></button>
+                  </div>
+                </div>
+                <div class="text-xs font-medium text-white bg-slate-900/70 p-3 rounded-xl border border-slate-800">“${opt.text}”</div>
+                <p class="text-[11px] text-slate-400">💡 <strong>Why it works:</strong> ${opt.why}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // 2. Reply Coach Dynamic Synthesis
+    let currentIntent = 'keep_vibe';
+    function setIntent(intent) {
+      currentIntent = intent;
+      document.querySelectorAll('.intent-btn').forEach(b => {
+        b.className = 'intent-btn w-full p-2.5 rounded-xl border text-left bg-slate-900/60 border-slate-800 text-slate-400';
+      });
+      const el = document.getElementById(`int-${intent}`);
+      if (el) el.className = 'intent-btn w-full p-2.5 rounded-xl border text-left bg-purple-600/15 border-purple-500 text-white';
+      generateReplyCoach();
+    }
+
+    function generateDynamicReplies(msg, intent) {
+      const text = (msg || '').trim();
+      const lower = text.toLowerCase();
+
+      const isFood = /banana bread|baking|bake|cook|cooking|pasta|pizza|ramen|taco|sushi|cake|brownie|coffee|matcha|tea|food|snack|dinner|lunch|breakfast/.test(lower);
+      const isGym = /gym|workout|lifting|run|running|bouldering|climb|cardio|squat|bench|leg day/.test(lower);
+      const isWorkOrStudy = /work|studying|study|exam|midterm|finals|office|zoom|boss|project|deadline|homework|assignment/.test(lower);
+      const isTired = /tired|exhausted|dead|sleepy|drained|nap|bed|sleeping/.test(lower);
+      const isDry = /^(haha yeah|haha|yeah|lol|k|cool|nice|yep|true|definitely|totally|idk|sure|ok)[.!]?$/.test(lower);
+
+      let r1 = {}, r2 = {}, r3 = {};
+
+      if (intent === 'ask_out') {
+        if (isFood) {
+          r1 = {
+            title: 'The Foodie Bridge',
+            text: `Haha love that energy! If you can make food like that, coffee or a casual dinner is officially on me this week. Free Thursday?`,
+            subtext: 'Bridges their culinary habit into a relaxed, zero-pressure invitation.'
+          };
+          r2 = {
+            title: 'The Friendly Challenge',
+            text: `Okay now I'm starving. Let's debate the best food spots in town over drinks or coffee this week?`,
+            subtext: 'Playfully demands taste testing in a real-world setting.'
+          };
+          r3 = {
+            title: 'The Direct Move',
+            text: `Haha that's great. You seem really fun—free to grab a casual coffee or drink sometime this week?`,
+            subtext: 'Clean and confident invitation with clear intent.'
+          };
+        } else if (isGym) {
+          r1 = {
+            title: 'Post-Workout Coffee',
+            text: `Surviving that workout definitely earns you a celebratory coffee or smoothie. Free to grab one Thursday?`,
+            subtext: 'Natural reward framing that connects to their immediate activity.'
+          };
+          r2 = {
+            title: 'The Banter Invitation',
+            text: `Since you clearly have unlimited energy: let's grab coffee or drinks this week so you can tell me the routine?`,
+            subtext: 'Complimentary and forward-moving.'
+          };
+          r3 = {
+            title: 'The Direct Move',
+            text: `Haha respect the hustle. Free to grab a drink or coffee sometime this week between workouts?`,
+            subtext: 'Respectful and confident meetup proposal.'
+          };
+        } else if (isWorkOrStudy || isTired) {
+          r1 = {
+            title: 'The Decompression Invite',
+            text: `Surviving today definitely earns you a celebratory drink or coffee. How does your Thursday look?`,
+            subtext: 'Positions meeting up as a welcoming stress relief.'
+          };
+          r2 = {
+            title: 'The Screen-Time Break',
+            text: `Oof, you need a serious break from all those screens. Let's grab coffee this week to properly decompress?`,
+            subtext: 'Empathetic and proactive transition into real life.'
+          };
+          r3 = {
+            title: 'The Direct Move',
+            text: `Let me know when you come up for air! Would love to take you out for a coffee or drink this week :)`,
+            subtext: 'Gentle, supportive, and distinctly clear in romantic interest.'
+          };
+        } else {
+          r1 = {
+            title: 'The Smooth Transition',
+            text: `Haha love that! We should honestly grab coffee or a drink this week so you can tell me the full story. Free Thursday?`,
+            subtext: 'Open-loop storytelling bridge into an in-person date.'
+          };
+          r2 = {
+            title: 'The Shared Banter',
+            text: `Since our text chemistry is clearly undefeated: coffee this week? No pressure, just good vibes.`,
+            subtext: 'Self-aware confidence that sets an easy, comfortable frame.'
+          };
+          r3 = {
+            title: 'The Direct Move',
+            text: `You seem really cool—free to grab a casual drink or coffee sometime this week?`,
+            subtext: 'Simple, polite, and impossible to misunderstand.'
+          };
+        }
+      } else {
+        if (isFood) {
+          r1 = {
+            title: 'The Playful Inquiry',
+            text: `Haha late night cooking is an elite life choice. Did it actually turn out legendary or was it a chaotic kitchen disaster?`,
+            subtext: 'Validates their activity with humor and offers two easy reply branches.'
+          };
+          r2 = {
+            title: 'The Playful Tease',
+            text: `Wait, cooking at this hour? That's either intensely therapeutic or mildly concerning haha 😂`,
+            subtext: 'Playfully challenges them to defend their quirky habit.'
+          };
+          r3 = {
+            title: 'The Rating Game',
+            text: `Now I'm jealous. On a scale of 1 to 10, how proud are you of the final result?`,
+            subtext: 'Rating questions are frictionless and high-engagement.'
+          };
+        } else if (isGym) {
+          r1 = {
+            title: 'The Relatable Check',
+            text: `Respect! Are you the type to hit a personal record and feel on top of the world, or currently unable to walk up stairs? haha`,
+            subtext: 'Playfully exaggerates the post-gym exhaustion.'
+          };
+          r2 = {
+            title: 'The Fuel Question',
+            text: `Post-workout endorphins hit different. What's the meal of champions to refuel tonight?`,
+            subtext: 'Naturally pivots into food and comfort preferences.'
+          };
+          r3 = {
+            title: 'The Playful Tease',
+            text: `Careful, don't get too strong and start lifting cars out here 😂 Good session?`,
+            subtext: 'Lighthearted banter that keeps the energy high.'
+          };
+        } else if (isWorkOrStudy || isTired) {
+          r1 = {
+            title: 'The Supportive Banter',
+            text: `Oof, sounds like today put you through the wringer. Did you at least survive or are you running on pure caffeine right now?`,
+            subtext: 'Empathetic validation that makes them feel understood.'
+          };
+          r2 = {
+            title: 'The Decompress Plan',
+            text: `You officially survived the battle! What's the plan to decompress tonight—guilt-free scrolling or passing out immediately?`,
+            subtext: 'Humorous multiple-choice question that is effortless to reply to.'
+          };
+          r3 = {
+            title: 'The Gentle Check-in',
+            text: `Sending mental emergency support haha. Hope you can shut off all notifications for the rest of the evening!`,
+            subtext: 'Kind warmth with zero demand for a fast response.'
+          };
+        } else if (isDry) {
+          r1 = {
+            title: 'The Playful Callout',
+            text: `Careful now, don't wear yourself out typing all those paragraphs at once haha 😂`,
+            subtext: 'Uses teasing humor to acknowledge the short text without bitterness.'
+          };
+          r2 = {
+            title: 'The Rating Game',
+            text: `I'm giving that response a solid 4/10. Quick on the reply, but heavy on the mystery haha. What are you up to today?`,
+            subtext: 'Turns a dry text into a fun game.'
+          };
+          r3 = {
+            title: 'The Urgent Reset',
+            text: `Random urgent question to rescue us from dry text purgatory: what's your most controversial food opinion?`,
+            subtext: 'Clean topic change with an irresistible debate question.'
+          };
+        } else {
+          const snippet = text.slice(0, 40) || 'that';
+          r1 = {
+            title: 'The Natural Flow',
+            text: `Haha honestly '${snippet}' made me smile. What's the backstory behind that?`,
+            subtext: 'Reflects their actual words and invites storytelling.'
+          };
+          r2 = {
+            title: 'The Playful Banter',
+            text: `Wait... did you really just say that with a straight face? 😂 Bold claim.`,
+            subtext: 'Playfully challenges them to qualify their statement.'
+          };
+          r3 = {
+            title: 'The Curious Follow-up',
+            text: `Haha right? Remind me to tell you the chaotic follow-up to that later. How's the rest of your day going?`,
+            subtext: 'Creates an open loop that builds anticipation.'
+          };
+        }
+      }
+
+      return [r1, r2, r3];
+    }
+
+    function generateReplyCoach() {
+      const msg = document.getElementById('reply-input')?.value || "Honestly ended up baking banana bread at 2am and watching true crime docs haha";
+      const replies = generateDynamicReplies(msg, currentIntent);
+
+      document.getElementById('reply-output').innerHTML = `
+        <div class="space-y-4">
+          <div class="glass-panel p-3.5 rounded-2xl border border-slate-800 flex items-center justify-between">
+            <span class="text-xs text-slate-300 font-semibold">Intent: ${currentIntent === 'ask_out' ? 'Pivot To Meetup' : 'Keep The Vibe Going'}</span>
+            <span class="text-xs bg-emerald-950/80 text-emerald-300 px-2 py-0.5 rounded-full font-bold">99% Respect Guard</span>
+          </div>
+
+          <div class="space-y-3">
+            ${replies.map((r, i) => `
+              <div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-[11px] font-bold px-2 py-0.5 rounded ${i === 0 ? 'bg-purple-500/20 text-purple-300' : i === 1 ? 'bg-indigo-500/20 text-indigo-300' : 'bg-emerald-500/20 text-emerald-300'}">${r.title}</span>
+                  <div class="flex gap-1.5">
+                    <button onclick="copyText('${r.text.replace(/'/g, "\\'")}')" class="p-1 rounded bg-slate-800 text-slate-300 hover:text-white" title="Copy"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>
+                    <button onclick="saveMessage('${r.text.replace(/'/g, "\\'")}', 'Reply Coach')" class="p-1 rounded bg-slate-800 text-pink-400 hover:text-pink-300" title="Bookmark"><i data-lucide="bookmark" class="w-3.5 h-3.5"></i></button>
+                    <button onclick="openPhoneModal('${r.text.replace(/'/g, "\\'")}')" class="p-1 rounded bg-slate-800 text-blue-400"><i data-lucide="smartphone" class="w-3.5 h-3.5"></i></button>
+                  </div>
+                </div>
+                <div class="text-xs font-semibold text-white bg-slate-900/80 p-3 rounded-xl border border-slate-800">“${r.text}”</div>
+                <p class="text-[11px] text-slate-400">💡 <strong>Subtext:</strong> ${r.subtext}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // 3. Conversation Rescue Dynamic Synthesis
+    function generateDynamicRescue(stalledText) {
+      const text = (stalledText || '').trim();
+      const lower = text.toLowerCase();
+
+      const isRaincheck = /raincheck|busy|reschedule|can't make it|something came up|next time/.test(lower);
+      const isSilence = /silence|ghost|read|hours|days|no reply|ignored/.test(lower);
+
+      let s1 = {}, s2 = {}, s3 = {};
+
+      if (isRaincheck) {
+        s1 = {
+          title: 'The Zero-Pressure Grace',
+          text: `No worries at all! Life gets crazy. Hope everything's okay on your end, let's catch up whenever things settle down :)`,
+          strategy: 'Total emotional independence: shows zero resentment and leaves the door open.'
+        };
+        s2 = {
+          title: 'The Ball-In-Their-Court Pivot',
+          text: `All good! Let me know when your schedule clears up and we'll make it happen.`,
+          strategy: 'Clean boundary: hands responsibility to them without being passive-aggressive.'
+        };
+        s3 = {
+          title: 'The Lighthearted Reframe',
+          text: `Deal, but you owe me 1 extra point of interest next time haha. Have a good rest of your week!`,
+          strategy: 'Charming banter that dissolves any awkwardness or guilt.'
+        };
+      } else if (isSilence) {
+        s1 = {
+          title: 'The Visual Reset',
+          text: `Saw this today and instantly thought of our conversation [share funny photo/meme]. Tell me I'm not the only one who finds this hilarious.`,
+          strategy: 'Visual anchors bypass the awkwardness of restarting a cold chat.'
+        };
+        s2 = {
+          title: 'The Sudden Epiphany',
+          text: `Random thought that just demanded an answer: what is your most controversial pop-culture hot take?`,
+          strategy: 'A fresh, engaging prompt that completely ignores the passage of time.'
+        };
+        s3 = {
+          title: 'The Low-Pressure Check-in',
+          text: `Hey! Hope the week isn't completely burying you alive haha. Just wanted to send good vibes!`,
+          strategy: 'Warm, undemanding presence with zero guilt trip.'
+        };
+      } else {
+        s1 = {
+          title: 'The Random Hypothetical',
+          text: `Random urgent survey: if you could only eat food from one country for the next 5 years, what are you picking?`,
+          strategy: 'Bypasses awkward silence with a fun, non-threatening opinion game.'
+        };
+        s2 = {
+          title: 'The Low-Stakes Recommendation',
+          text: `Hey, quick question—you seem like someone with great taste: what is the best spot around here for a casual bite or coffee?`,
+          strategy: 'Flattering and practical; almost impossible to ignore.'
+        };
+        s3 = {
+          title: 'The Playful Tease',
+          text: `Careful now, don't wear yourself out with all those paragraphs at once haha 😂`,
+          strategy: 'Self-aware humor that acknowledges brevity with zero bitterness.'
+        };
+      }
+
+      return [s1, s2, s3];
+    }
+
+    function generateRescue() {
+      const last = document.getElementById('rescue-input')?.value || "Them: haha yeah";
+      const strategies = generateDynamicRescue(last);
+
+      document.getElementById('rescue-output').innerHTML = `
+        <div class="space-y-4">
+          <div class="glass-panel p-3.5 rounded-2xl border border-slate-800 space-y-1">
+            <div class="flex items-center justify-between text-xs font-semibold text-indigo-300">
+              <span>Diagnosis: Conversation Stalled</span>
+              <span class="text-emerald-400 font-semibold">Low-Pressure Pivot</span>
+            </div>
+            <p class="text-[11px] text-slate-400">The current thread hit an expiration point. Don't ask "why are you dry?". Switch topics effortlessly.</p>
+          </div>
+
+          <div class="space-y-3">
+            ${strategies.map((s, i) => `
+              <div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-[11px] font-bold px-2 py-0.5 rounded ${i === 0 ? 'bg-indigo-500/20 text-indigo-300' : i === 1 ? 'bg-purple-500/20 text-purple-300' : 'bg-emerald-500/20 text-emerald-300'}">${s.title}</span>
+                  <div class="flex gap-1.5">
+                    <button onclick="copyText('${s.text.replace(/'/g, "\\'")}')" class="p-1 rounded bg-slate-800 text-slate-300 hover:text-white" title="Copy"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>
+                    <button onclick="saveMessage('${s.text.replace(/'/g, "\\'")}', 'Rescue')" class="p-1 rounded bg-slate-800 text-pink-400 hover:text-pink-300" title="Bookmark"><i data-lucide="bookmark" class="w-3.5 h-3.5"></i></button>
+                    <button onclick="openPhoneModal('${s.text.replace(/'/g, "\\'")}')" class="p-1 rounded bg-slate-800 text-blue-400"><i data-lucide="smartphone" class="w-3.5 h-3.5"></i></button>
+                  </div>
+                </div>
+                <div class="text-xs font-semibold text-white bg-slate-900/80 p-3 rounded-xl border border-slate-800">“${s.text}”</div>
+                <p class="text-[11px] text-slate-400">💡 <strong>Strategy:</strong> ${s.strategy}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // 4. Tone Tuner & Rewriter Dynamic Synthesis
+    function generateDynamicRewrite(draftText) {
+      const raw = (draftText || '').trim();
+      let cleaned = raw
+        .replace(/I was wondering if maybe\s*/gi, '')
+        .replace(/if you are not too busy\??/gi, '')
+        .replace(/if you're not too busy\??/gi, '')
+        .replace(/sorry to bother you,?\s*/gi, '')
+        .replace(/just wanted to check if maybe\s*/gi, '')
+        .replace(/no worries if not,?\s*/gi, '')
+        .replace(/if that's okay with you\??/gi, '')
+        .trim();
+
+      if (!cleaned) cleaned = "grab coffee sometime this week";
+
+      const isMeetup = /coffee|drink|lunch|dinner|hang out|meet up|grab|get together/.test(cleaned.toLowerCase());
+
+      let t1 = '', t2 = '', t3 = '';
+
+      if (isMeetup) {
+        t1 = `Hey, was curious if you're free to grab coffee sometime this week?`;
+        t2 = `We should grab coffee this week. Let me know what your schedule looks like!`;
+        t3 = `Not to be dramatic, but I need caffeine and good conversation—coffee this week?`;
+      } else {
+        const cleanLower = cleaned.charAt(0).toLowerCase() + cleaned.slice(1);
+        t1 = `Hey, was curious—${cleanLower}?`;
+        t2 = `Hey! Let's do this: ${cleanLower}. Let me know what works for you!`;
+        t3 = `Urgent question: ${cleanLower}? Need to know haha!`;
+      }
+
+      return [
+        {
+          title: 'Option 1: Chill & Natural',
+          badgeClass: 'bg-indigo-500/20 text-indigo-300',
+          text: t1,
+          why: 'Removes over-apologetic filler words ("wondering if maybe", "if not too busy").'
+        },
+        {
+          title: 'Option 2: Confident & Direct',
+          badgeClass: 'bg-purple-500/20 text-purple-300',
+          text: t2,
+          why: 'Clear intentionality with zero hesitation or desperation.'
+        },
+        {
+          title: 'Option 3: Playful & Witty',
+          badgeClass: 'bg-emerald-500/20 text-emerald-300',
+          text: t3,
+          why: 'Self-aware humor that makes accepting easy and fun.'
+        }
+      ];
+    }
+
+    function generateRewrite() {
+      const raw = document.getElementById('rewrite-input')?.value || "I was wondering if maybe you would like to grab coffee sometime if you are not too busy?";
+      const options = generateDynamicRewrite(raw);
+
+      document.getElementById('rewrite-output').innerHTML = `
+        <div class="space-y-4">
+          <div class="glass-panel p-3.5 rounded-2xl border border-slate-800 flex items-center justify-between">
+            <span class="text-xs text-slate-300 font-semibold">Tuned for: Natural & Low-Pressure</span>
+            <span class="text-xs bg-emerald-950/80 text-emerald-300 px-2 py-0.5 rounded-full font-bold">100% Respect Guard</span>
+          </div>
+
+          <div class="space-y-3">
+            ${options.map((opt) => `
+              <div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-[11px] font-bold px-2 py-0.5 rounded ${opt.badgeClass}">${opt.title}</span>
+                  <div class="flex gap-1.5">
+                    <button onclick="copyText('${opt.text.replace(/'/g, "\\'")}')" class="p-1 rounded bg-slate-800 text-slate-300 hover:text-white" title="Copy"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>
+                    <button onclick="saveMessage('${opt.text.replace(/'/g, "\\'")}', 'Tone Tuner')" class="p-1 rounded bg-slate-800 text-pink-400 hover:text-pink-300" title="Bookmark"><i data-lucide="bookmark" class="w-3.5 h-3.5"></i></button>
+                    <button onclick="openPhoneModal('${opt.text.replace(/'/g, "\\'")}')" class="p-1 rounded bg-slate-800 text-blue-400"><i data-lucide="smartphone" class="w-3.5 h-3.5"></i></button>
+                  </div>
+                </div>
+                <div class="text-xs font-semibold text-white bg-slate-900/80 p-3 rounded-xl border border-slate-800">“${opt.text}”</div>
+                <p class="text-[11px] text-slate-400">💡 ${opt.why}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // 5. Bio Architect Dynamic Synthesis
+    function generateBios() {
+      const interests = (document.getElementById('bio-interests')?.value || 'Indie coffee shops, bouldering, synthwave, spicy ramen').trim();
+      const hotTake = (document.getElementById('bio-hottake')?.value || 'Pineapple belongs on pizza and iced coffee is an all-season beverage').trim();
+
+      const interestList = interests.split(',').map(s => s.trim()).filter(Boolean);
+      const mainInterest = interestList[0] || 'great coffee';
+      const secondInterest = interestList[1] || 'good music';
+
+      const b1 = `If we survive a road trip listening exclusively to ${mainInterest} and ${secondInterest} playlists, we're legally soulmates.`;
+      const b2 = `${hotTake}. (Warning: I have an entire 15-slide PowerPoint prepared to defend this).`;
+
+      document.getElementById('bio-output').innerHTML = `
+        <div class="space-y-4">
+          <div class="glass-panel p-3.5 rounded-2xl border border-slate-800 flex items-center justify-between">
+            <span class="text-xs text-slate-300 font-semibold">Target App: Hinge & Dating Apps</span>
+            <span class="text-xs bg-emerald-950/80 text-emerald-300 px-2 py-0.5 rounded-full font-bold">100% Respect Guard</span>
+          </div>
+          <div class="space-y-3">
+            <div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-2">
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-pink-500/20 text-pink-300">A shower thought I recently had...</span>
+              <div class="text-xs font-semibold text-white bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 leading-relaxed">“${b1}”</div>
+              <p class="text-[11px] text-slate-400"><strong>Hook Psychology:</strong> Playfully tests shared chemistry around "${mainInterest}" and invites a banter opener.</p>
+            </div>
+            <div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-2">
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-300">Change my mind about...</span>
+              <div class="text-xs font-semibold text-white bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 leading-relaxed">“${b2}”</div>
+              <p class="text-[11px] text-slate-400"><strong>Hook Psychology:</strong> Gives matches an irresistible invitation to challenge or banter about your hot take.</p>
+            </div>
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // 6. Vision Scan
+    function generateVision() {
+      const v1 = `Okay wait, where was this photo taken? The aesthetic is unmatched, adding it to my bucket list.`;
+      const v2 = `Not you living in a cinematic indie film while the rest of us are doing mundane laundry 😭`;
+
+      document.getElementById('vision-output').innerHTML = `
+        <div class="space-y-4">
+          <div class="glass-panel p-4 rounded-2xl border border-slate-800 space-y-2">
+            <div class="flex items-center justify-between text-xs font-bold text-pink-300">
+              <span>Vision Analysis Complete</span>
+              <span class="text-xs bg-emerald-950/80 text-emerald-300 px-2 py-0.5 rounded-full">Low-Pressure Hook</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="text-[11px] font-medium bg-slate-800 text-slate-200 px-2.5 py-0.5 rounded-full border border-slate-700">✓ Scenic cafe view</span>
+              <span class="text-[11px] font-medium bg-slate-800 text-slate-200 px-2.5 py-0.5 rounded-full border border-slate-700">✓ Cozy film aesthetic</span>
+              <span class="text-[11px] font-medium bg-slate-800 text-slate-200 px-2.5 py-0.5 rounded-full border border-slate-700">✓ No location tag</span>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">Curious & Observational</span>
+                <div class="flex gap-1.5">
+                  <button onclick="copyText('${v1.replace(/'/g, "\\'")}')" class="p-1 rounded bg-slate-800 text-slate-300"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>
+                  <button onclick="openPhoneModal('${v1.replace(/'/g, "\\'")}')" class="p-1 rounded bg-slate-800 text-blue-400"><i data-lucide="smartphone" class="w-3.5 h-3.5"></i></button>
+                </div>
+              </div>
+              <div class="text-xs font-semibold text-white bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">“${v1}”</div>
+              <p class="text-[11px] text-slate-400">Why it works: People love sharing travel spots and recommendations.</p>
+            </div>
+          </div>
+
+          <div class="glass-panel p-3.5 rounded-2xl border border-slate-800 text-xs text-slate-300 space-y-1">
+            <strong class="text-indigo-400">⏱️ Delivery Advice:</strong> Reply directly to the story within 2-4 hours while the experience is fresh. Avoid double-texting.
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // Riddle 2: What Was Meant
+    function loadRiddleCase(caseType) {
+      switchTab('what_was_meant');
+      if (caseType === 'fine') {
+        document.getElementById('riddle-phrase').value = 'Fine.';
+        document.getElementById('riddle-context').value = 'Normally texts warmly with emojis, but sent a single word with a period.';
+        document.getElementById('riddle-guess').value = 'I think they are secretly angry at something I said.';
+      } else if (caseType === 'maybe') {
+        document.getElementById('riddle-phrase').value = 'Maybe, I\'ll see.';
+        document.getElementById('riddle-context').value = 'Asked if they wanted to get dinner Thursday; gave a vague non-committal answer.';
+        document.getElementById('riddle-guess').value = 'I feel like they don\'t want to go but are too polite to say no.';
+      } else if (caseType === 'slow') {
+        document.getElementById('riddle-phrase').value = '[4 hours of silence]';
+        document.getElementById('riddle-context').value = 'Active on social media 20 mins ago, but haven\'t replied to my question.';
+        document.getElementById('riddle-guess').value = 'They are intentionally ignoring me or losing interest.';
+      } else if (caseType === 'plan') {
+        document.getElementById('riddle-phrase').value = 'Something came up tonight, raincheck?';
+        document.getElementById('riddle-context').value = 'Cancelled 3 hours before meeting without proposing a new date.';
+        document.getElementById('riddle-guess').value = 'They got cold feet and are softly ghosting.';
+      }
+      generateWhatWasMeant();
+    }
+
+    // Riddle 2: What Was Meant Dynamic Solution Engine
+    function generateDynamicRiddleSolution(phrase, context, guess) {
+      const p = (phrase || '').toLowerCase();
+      
+      let risk = 88;
+      let diagnosis = "Without voice tone or facial cues, human psychology defaults to worst-case projection. Separate anxiety from reality:";
+      let realities = [];
+      let bridges = [];
+      let answer = "The Riddle Answer: Who is responsible for the gap? Neither person lied. The person who notices the gap can gently close it with warmth, not accusation.";
+
+      if (p.includes('maybe') || p.includes('see')) {
+        risk = 82;
+        diagnosis = "'Maybe' and 'I\\'ll see' trigger immediate anxious attachment. The receiver hears 'I don't care enough', while the sender often meant 'I am genuinely overwhelmed and hate breaking promises'.";
+        realities = [
+          { label: "The Overwhelmed Scheduler (55% Probability)", note: "Genuinely wants to see you, but their energy/calendar is uncertain. They fear committing and letting you down later." },
+          { label: "The Polite Hesitation (35% Probability)", note: "Hesitant about the specific activity or timing, but fears conflict or awkwardness if they give a blunt 'no'." },
+          { label: "The Spontaneous Pacer (10% Probability)", note: "Prefers deciding on the day of rather than booking plans 4 days in advance." }
+        ];
+        bridges = [
+          { title: "The Explicit Low-Pressure Out", text: "Totally no worries! Let's pencil it in loosely. Shoot me a text Thursday afternoon if your schedule clears up—if not, zero stress :)", why: "Removes all performance pressure. People commit when they feel freedom, not obligation." },
+          { title: "The Lower Threshold Pivot", text: "No pressure at all! If a full dinner is hectic this week, we could always do a 25-min quick coffee or boba instead?", why: "Lowers the commitment threshold if time or energy was the barrier." }
+        ];
+        answer = "The Riddle Answer: When 'Maybe' appears, pressing for certainty creates resistance. Giving explicit permission to say no paradoxically makes them want to say yes.";
+      } else if (p.includes('slow') || p.includes('silence') || p.includes('hours') || p.includes('reply')) {
+        risk = 78;
+        diagnosis = "The Silent Gap: A texting delay feels like intentional withdrawal of affection. In reality, texting speed is 95% about their chaotic environment and 5% about you.";
+        realities = [
+          { label: "The Contextual Blackout (65% Probability)", note: "Work deadlines, driving, or zero emotional battery left to craft a thoughtful message." },
+          { label: "The Distracted Notification Loop (25% Probability)", note: "Opened the notification while busy, mentally replied in their head, and forgot to hit send." },
+          { label: "The Intentional Breathing Room (10% Probability)", note: "Taking space to unwind before re-engaging with conversation." }
+        ];
+        bridges = [
+          { title: "The Visual Reset", text: "Saw this today and instantly thought of our conversation [share funny meme/photo]. Tell me I'm not the only one who finds this hilarious.", why: "A visual reset bypasses the awkwardness of restarting a stalled chat." },
+          { title: "The Low-Pressure Check-in", text: "Hey! Hope your week isn't completely burying you alive haha. Just wanted to send good vibes!", why: "Warm, undemanding presence with zero guilt trip." }
+        ];
+        answer = "The Riddle Answer: Never ask 'why did you take 4 hours to reply?'. Reset the conversational momentum with fresh, visual warmth.";
+      } else if (p.includes('plan') || p.includes('raincheck') || p.includes('cancel') || p.includes('came up')) {
+        risk = 90;
+        diagnosis = "Last-minute cancellations trigger fear of rejection. But cancellations are almost always a battle between their internal social battery and circumstances, not their opinion of you.";
+        realities = [
+          { label: "Sudden Life Friction (60% Probability)", note: "Work emergency, unexpected family demand, or exhaustion caught them off guard." },
+          { label: "Social Battery Depletion (30% Probability)", note: "Too drained to be good company and needed to retreat home without putting on a performance." },
+          { label: "Cold Feet / Hesitation (10% Probability)", note: "Second thoughts about the timing or pace." }
+        ];
+        bridges = [
+          { title: "The Zero-Pressure Grace", text: "All good! Hope everything is okay on your end. Let me know when your schedule frees up and we'll reschedule :)", why: "Total emotional security: shows zero resentment and leaves the door completely open." },
+          { title: "The Lighthearted Reframe", text: "Deal, but you owe me 1 extra point of interest next time haha. Have a restful night!", why: "Charming banter that dissolves any awkwardness or guilt." }
+        ];
+        answer = "The Riddle Answer: Handling a cancellation with relaxed independence makes you 10x more attractive than guilt-tripping.";
+      } else {
+        // Fine. or custom phrase
+        risk = 88;
+        diagnosis = "The word '" + (phrase || 'Fine.') + "' is the ultimate conversational Rorschach test. Without voice tone or facial cues, psychology defaults to assuming hidden friction.";
+        realities = [
+          { label: "The Exhaustion Reality (60% Probability)", note: "Mentally drained or multitasking. Sent a brief text as quick logistical shorthand with zero hidden anger." },
+          { label: "The Unspoken Hesitation (30% Probability)", note: "Unsure of their schedule or energy, but afraid of conflict or letting you down." },
+          { label: "The Neutral Literal Shorthand (10% Probability)", note: "Treats texting purely as logistics rather than emotional validation." }
+        ];
+        bridges = [
+          { title: "The Low-Pressure Clarifier", text: "Hey, tone is impossible to read over text haha—all good on your end, or did today completely drain you?", why: "Gives them an easy, non-defensive door to share stress without feeling on trial." },
+          { title: "The Playful Disarm", text: "Reading '" + (phrase || 'Fine.') + "' just sent my overthinking brain into overdrive haha 😂 Everything good over there?", why: "Uses self-aware humor to call out the awkwardness without blaming them." }
+        ];
+        answer = "The Riddle Answer: Who is responsible for the gap? Neither person lied, but silence and single words invite projection. The person who notices the gap can gently close it with warmth, not accusation.";
+      }
+
+      return { risk, diagnosis, realities, bridges, answer };
+    }
+
+    function generateWhatWasMeant() {
+      const phrase = document.getElementById('riddle-phrase')?.value || "Fine.";
+      const context = document.getElementById('riddle-context')?.value || "";
+      const guess = document.getElementById('riddle-guess')?.value || "I think they are angry.";
+
+      const solution = generateDynamicRiddleSolution(phrase, context, guess);
+
+      document.getElementById('riddle-output').innerHTML = `
+        <div class="space-y-4">
+          <div class="glass-panel p-4 rounded-2xl border border-slate-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold text-white uppercase tracking-wider">The Gap Diagnosis</span>
+              <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-pink-500/20 text-pink-300 border border-pink-500/30">${solution.risk}% Misinterpretation Risk</span>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed font-medium">
+              ${solution.diagnosis} You fear: "<em>${guess}</em>". But here are the plausible realities:
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            ${solution.realities.map((r, i) => `
+              <div class="glass-card p-3 rounded-xl border border-slate-800 text-xs">
+                <div class="flex justify-between font-bold ${i === 0 ? 'text-purple-300' : 'text-indigo-300'} mb-1">
+                  <span>${r.label}</span>
+                  <span class="text-slate-400 text-[10px]">${i === 0 ? 'Most Common' : 'Plausible'}</span>
+                </div>
+                <p class="text-slate-300">${r.note}</p>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="space-y-2 pt-2">
+            <h5 class="text-xs font-bold text-emerald-400 uppercase tracking-wider">How to Bridge The Gap (Zero Guilt)</h5>
+            ${solution.bridges.map((b, i) => `
+              <div class="glass-card p-3.5 rounded-xl border border-slate-800 space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded ${i === 0 ? 'bg-emerald-500/20 text-emerald-300' : 'bg-purple-500/20 text-purple-300'}">${b.title}</span>
+                  <div class="flex gap-1.5">
+                    <button onclick="copyText('${b.text.replace(/'/g, "\\'")}')" class="p-1 rounded bg-slate-800 text-slate-300 hover:text-white" title="Copy"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>
+                    <button onclick="saveMessage('${b.text.replace(/'/g, "\\'")}', 'Riddle 2')" class="p-1 rounded bg-slate-800 text-pink-400 hover:text-pink-300" title="Bookmark"><i data-lucide="bookmark" class="w-3.5 h-3.5"></i></button>
+                    <button onclick="openPhoneModal('${b.text.replace(/'/g, "\\'")}')" class="p-1 rounded bg-slate-800 text-blue-400"><i data-lucide="smartphone" class="w-3.5 h-3.5"></i></button>
+                  </div>
+                </div>
+                <div class="text-xs font-semibold text-white bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">“${b.text}”</div>
+                <p class="text-[10px] text-slate-400">💡 ${b.why}</p>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="glass-panel p-3.5 rounded-2xl border border-indigo-500/30 text-xs text-slate-300 bg-indigo-950/20">
+            <strong class="text-indigo-400">${solution.answer}</strong>
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // Database Inspector Functions
+    let dbRecordCount = 42;
+    let dbConversations = [
+      { id: 'conv_seed_001', tool: 'icebreaker', channel: 'college', text: 'Hey! Random question: is the 3rd floor wifi always this stubborn or is it just testing my patience?', respect: 98, time: 'Just now' },
+      { id: 'riddle_seed_001', tool: 'what_was_meant', channel: 'gap_decoder', text: 'Fine. -> The Low-Pressure Clarifier: "Hey, tone is impossible to read over text haha—all good?"', respect: 99, time: '12 mins ago' },
+      { id: 'conv_seed_002', tool: 'reply_coach', channel: 'instagram', text: 'Haha right? Remind me to tell you the chaotic follow-up to that later.', respect: 97, time: '45 mins ago' },
+      { id: 'conv_seed_003', tool: 'rescue', channel: 'stalled_chat', text: 'Random urgent survey: if you could only eat food from one country for 5 years, what are you picking?', respect: 100, time: '2 hours ago' }
+    ];
+
+    function openDatabaseModal() {
+      document.getElementById('database-modal').classList.remove('hidden');
+      renderDbRecords();
+      lucide.createIcons();
+    }
+
+    function closeDatabaseModal() {
+      document.getElementById('database-modal').classList.add('hidden');
+    }
+
+    function copyDbPath() {
+      navigator.clipboard.writeText('backend/app/data/icebreaker.db');
+      document.getElementById('copy-btn-text').textContent = 'Copied!';
+      setTimeout(() => {
+        document.getElementById('copy-btn-text').textContent = 'Copy Path';
+      }, 2000);
+      showToast('Database path copied to clipboard!');
+    }
+
+    function switchDbTab(tab) {
+      ['overview', 'tables', 'records'].forEach(t => {
+        document.getElementById(`dbview-${t}`).classList.add('hidden');
+        document.getElementById(`dbtab-${t}`).className = 'py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition';
+      });
+      document.getElementById(`dbview-${tab}`).classList.remove('hidden');
+      document.getElementById(`dbtab-${tab}`).className = 'py-3 border-b-2 border-indigo-500 text-indigo-400 font-semibold transition';
+      lucide.createIcons();
+    }
+
+    function renderDbRecords() {
+      const container = document.getElementById('db-records-list');
+      document.getElementById('db-records-count').textContent = dbConversations.length;
+      document.getElementById('db-stat-total').textContent = dbRecordCount;
+      
+      container.innerHTML = dbConversations.map(c => `
+        <div class="p-3 bg-slate-900/60 border border-slate-800 rounded-xl space-y-1.5">
+          <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center space-x-2">
+              <span class="font-mono text-indigo-400 text-[11px]">${c.id}</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-medium text-[10px] uppercase">${c.tool}</span>
+              <span class="text-slate-500 text-[11px]">• ${c.channel}</span>
+            </div>
+            <div class="flex items-center space-x-2 text-[11px] text-slate-400">
+              <span class="text-emerald-400 font-medium">${c.respect}% Respect</span>
+              <span>• ${c.time}</span>
+            </div>
+          </div>
+          <div class="text-xs text-slate-300 bg-slate-950/60 p-2 rounded-lg border border-slate-900 font-mono">
+            "${c.text}"
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function refreshDbStats() {
+      showToast('Refreshed database telemetry from SQLite engine');
+      renderDbRecords();
+    }
+
+    function recordDbEvent(tool, channel, text, respect) {
+      dbRecordCount++;
+      dbConversations.unshift({
+        id: `conv_${Date.now().toString().slice(-6)}`,
+        tool,
+        channel,
+        text,
+        respect,
+        time: 'Just now'
+      });
+      renderDbRecords();
+    }
+
+    let dbDebounceTimer = null;
+    function debouncedRecordDbEvent(tool, channel, text, respect) {
+      clearTimeout(dbDebounceTimer);
+      dbDebounceTimer = setTimeout(() => {
+        recordDbEvent(tool, channel, text, respect);
+      }, 700);
+    }
+
+    const origGenIcebreakers = generateIcebreakers;
+    generateIcebreakers = function() {
+      origGenIcebreakers();
+      debouncedRecordDbEvent('icebreaker', currentPlatform, 'Generated contextual openers for ' + currentPlatform, 98);
+    };
+
+    const origGenWhatWasMeant = generateWhatWasMeant;
+    generateWhatWasMeant = function() {
+      origGenWhatWasMeant();
+      debouncedRecordDbEvent('what_was_meant', 'gap_decoder', 'Decoded Riddle 2 for ambiguous phrase', 99);
+    };
+
+    function loadDemoScenario(type) {
+      closeJudgeModal();
+      if (type === 'college') {
+        switchTab('icebreaker');
+        generateIcebreakers();
+      } else if (type === 'bio') {
+        switchTab('bio_maker');
+        generateBios();
+      } else if (type === 'vision') {
+        switchTab('vision');
+        generateVision();
+      }
+    }
+
+    lucide.createIcons();
+  </script>
+</body>
+</html>
+

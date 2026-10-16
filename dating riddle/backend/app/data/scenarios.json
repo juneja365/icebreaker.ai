@@ -1,0 +1,93 @@
+[
+  {
+    "id": "scenario-college",
+    "title": "College Lecture Crush",
+    "badge": "College / Campus",
+    "setting": "college",
+    "situation": "We sit near each other in Organic Chemistry lecture every Tuesday, make eye contact, but haven't introduced ourselves yet.",
+    "vibe": "chill",
+    "target_details": "Always takes neat iPad notes and has coffee from the local café.",
+    "recommended_tool": "icebreaker"
+  },
+  {
+    "id": "scenario-insta",
+    "title": "Instagram Travel Story",
+    "badge": "Instagram / Social",
+    "setting": "instagram",
+    "situation": "They posted a stunning sunset photo from a weekend trip to Kyoto with no location tag.",
+    "vibe": "funny",
+    "target_details": "Looks like an aesthetic film camera shot, peaceful scenery.",
+    "recommended_tool": "icebreaker"
+  },
+  {
+    "id": "scenario-dating",
+    "title": "Dating App Bio Hook",
+    "badge": "Dating / Match",
+    "setting": "dating",
+    "situation": "Matched 2 hours ago. Their bio says: 'Tell me your most controversial food opinion and don't say pineapple on pizza.'",
+    "vibe": "playful",
+    "target_details": "They love rock climbing, indie coffee shops, and live jazz.",
+    "recommended_tool": "icebreaker"
+  },
+  {
+    "id": "scenario-reply",
+    "title": "Reply Coach: Flirty & Curious",
+    "badge": "Reply Coach",
+    "setting": "dating",
+    "situation": "You asked what they did this weekend.",
+    "received_message": "Honestly ended up baking banana bread at 2am and watching true crime docs haha",
+    "vibe": "playful",
+    "recommended_tool": "reply_coach"
+  },
+  {
+    "id": "scenario-rescue",
+    "title": "Conversation Rescue: Dry 'haha yeah'",
+    "badge": "Rescue Mode",
+    "setting": "dating",
+    "situation": "You were chatting about concerts, and they responded with a dry two-word reply.",
+    "received_message": "haha yeah",
+    "stall_reason": "one_word_answer",
+    "vibe": "chill",
+    "recommended_tool": "rescue"
+  },
+  {
+    "id": "scenario-teammate",
+    "title": "Remote Tech Teammate",
+    "badge": "Teammate / Work",
+    "setting": "teammate",
+    "situation": "New junior software engineer just joined your team Slack channel today.",
+    "vibe": "thoughtful",
+    "target_details": "Just graduated, based in Chicago, mentions loving retro gaming.",
+    "recommended_tool": "icebreaker"
+  },
+  {
+    "id": "scenario-bio",
+    "title": "Dating Bio Makeover",
+    "badge": "Bio Architect",
+    "setting": "dating",
+    "situation": "Craft high-converting Hinge prompts combining indie coffee, rock climbing, and spicy food debates.",
+    "vibe": "playful",
+    "target_details": "Indie coffee, bouldering, synthwave, spicy ramen",
+    "recommended_tool": "bio_maker"
+  },
+  {
+    "id": "scenario-screenshot",
+    "title": "Screenshot Vision: Story Drop",
+    "badge": "Vision Scan",
+    "setting": "instagram",
+    "situation": "Drop a screenshot of a friend or crush's Instagram story to auto-extract hooks without typing.",
+    "vibe": "funny",
+    "target_details": "Scenic hiking mountain overlook with cute golden retriever",
+    "recommended_tool": "screenshot_scan"
+  },
+  {
+    "id": "scenario-riddle2",
+    "title": "Riddle 2: 'Fine.' Gap Decoder",
+    "badge": "Riddle 2: Dating",
+    "setting": "dating",
+    "situation": "Normally texts warmly with emojis, but replied with a single word and a period: 'Fine.' after 3 hours.",
+    "vibe": "thoughtful",
+    "received_message": "Fine.",
+    "recommended_tool": "what_was_meant"
+  }
+]
